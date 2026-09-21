@@ -34,3 +34,6 @@ coverage/
 .vite/
 .turbo/
 *.tsbuildinfo
+
+# 运行时 SQLite 数据库（构建指纹舱）
+data/
