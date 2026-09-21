@@ -1,0 +1,17 @@
+import { Chamber } from '../src/server/chamber';
+import { seedChamber } from '../src/server/seed';
+const c = new Chamber('tmp-smoke/db.sqlite');
+seedChamber(c);
+const s = c.state();
+console.log('actions', s.actions.length);
+console.log('rules', s.ruleVersions.map(r=>`v${r.id}:${r.status}`));
+console.log('disputes', s.disputes.length, JSON.stringify(s.disputes[0]?.entries.map(e=>[e.observedSeq,e.source,e.isFirst])));
+console.log('prop direct', s.propagation[0]?.directlyAffected, 'reach', s.propagation[0]?.reachable.map(r=>r.actionId));
+const fp=s.fingerprints.find(f=>f.actionId==='link-app');
+console.log('link distrusted', fp?.distrusted, fp?.distrustReason);
+const parser=s.fingerprints.find(f=>f.actionId==='compile-parser-user');
+console.log('parser status', parser?.status);
+console.log('undeclared', s.undeclaredEnv);
+const dr=c.dryRunDraft(2);
+console.log('dryrun changed', dr.changedCount, 'collisions', dr.collisions.length, 'sameout', dr.missingOutputCollisions.length);
+console.log('collision groups', dr.collisions.map(x=>x.actionIds));
